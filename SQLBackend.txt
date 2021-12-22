@@ -1,0 +1,61 @@
+--------------1----------------
+create table Countries(
+ID int NOT NULL  , 
+CName VARCHAR(40),
+Capital VARCHAR(40),
+Population int,
+LenguageID int,
+FOREIGN KEY (LenguageID) REFERENCES Lenguages(id)
+);
+
+create table Lenguages(
+ID int not null,
+LName VARCHAR(30)
+unique(ID)
+);
+
+ALTER TABLE Lenguages ADD (
+  CONSTRAINT Lenguages_pk PRIMARY KEY (ID));
+
+create SEQUENCE Lenguages_sequence START WITH 1 INCREMENT BY 1
+  CACHE 100;
+CREATE OR REPLACE TRIGGER Lenguages_on_insert
+  BEFORE INSERT ON Lenguages
+  FOR EACH ROW
+  when(new.ID is null)
+BEGIN
+  SELECT Lenguages_sequence.nextval
+  INTO :new.ID
+  FROM dual;
+END;
+
+
+create SEQUENCE Countries_sequence START WITH 1 INCREMENT BY 1
+  CACHE 100;
+CREATE OR REPLACE TRIGGER Countries_on_insert
+  BEFORE INSERT ON Countries
+  FOR EACH ROW
+ when(new.ID is null)
+BEGIN
+  SELECT Countries_sequence.nextval
+  INTO :new.ID
+  FROM dual;
+END;
+
+
+
+select * from Countries;
+select * from Lenguages;
+--------------2----------------
+insert into COUNTRIES values('Mexico','Mexico',128000000,1);
+insert into Lenguages values(1,'Español');
+insert into COUNTRIES values(2,'Brazil','Brasília',212000000,2);
+insert into Lenguages values(1,'Portuguese');
+--------------3----------------
+update countries set population =250000 where id=1;
+--------------4----------------
+delete countries where population > 100000;
+--------------5----------------
+select countries.cname,lenguages.lname from countries inner join lenguages On Countries.LenguageID=lenguages.ID; 
+--------------6----------------
+SELECT COUNT(lenguageid) CNAME, lenguageid FROM COUNTRIES GROUP BY lenguageid;
